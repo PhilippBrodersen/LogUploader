@@ -5,11 +5,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLI_APP="$SCRIPT_DIR/GuildWars2EliteInsights-CLI"
 CONFIG_FILE="$SCRIPT_DIR/sample.conf"
 PROCESSED_FILE="$SCRIPT_DIR/.processed_hashes"
-BATCH_SIZE=500  # adjust to balance CLI startup overhead vs RAM
+BATCH_SIZE=500
 
 touch "$PROCESSED_FILE"
 
-# Load processed hashes
 declare -A processed
 if [[ -s "$PROCESSED_FILE" ]]; then
     mapfile -t hashes < "$PROCESSED_FILE"
