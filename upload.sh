@@ -18,10 +18,8 @@ if [[ -s "$PROCESSED_FILE" ]]; then
     done
 fi
 
-# Hash a file path
 hash_path() { echo -n "$1" | sha256sum | cut -d' ' -f1; }
 
-# Find all files
 all_files=()
 while IFS= read -r f; do
     all_files+=("$f")
@@ -38,8 +36,8 @@ echo "Previously processed: $previously_done"
 
 done_count=${#processed[@]}
 start_time=$(date +%s)
-processed_times=()  # timestamps for rolling rate
-window=5            # seconds
+processed_times=()
+window=5
 
 update_progress() {
     local status="$1"
@@ -56,9 +54,6 @@ update_progress() {
         "$current_batch" "$batch_max" "$rate"
 }
 
-
-
-# Process a batch of files
 process_batch() {
     local files=("$@")
 	((current_batch_index++))
@@ -70,7 +65,6 @@ process_batch() {
 
 		[[ $line == GuildWars2EliteInsights* || $line == Getting* ]] && continue
 
-        # First "Parsing Successful" switches status to Running
         if [[ $line == Parsing\ Successful* && $batch_status != "Running" ]]; then
             batch_status="Running"
         fi
@@ -91,15 +85,14 @@ process_batch() {
             [[ -n "$line" ]] && echo "$line"
         fi
     done
-    echo  # finish the line after the batch
+    echo
 }
 
-# Build and process batches
 batch=()
 count=0
 for file in "${all_files[@]}"; do
     h=$(hash_path "$file")
-    [[ -n ${processed[$h]} ]] && continue  # skip already processed
+    [[ -n ${processed[$h]} ]] && continue
 
     batch+=("$file")
     ((++count))
@@ -111,7 +104,6 @@ for file in "${all_files[@]}"; do
     fi
 done
 
-# Process any leftover files
 ((count > 0)) && process_batch "${batch[@]}"
 
 echo -e "\nAll done!"
